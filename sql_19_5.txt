@@ -1,0 +1,167 @@
+
+CREATE TABLE main_categories
+(
+  `main_categories_id` int(11)   AUTO_INCREMENT,
+  `cat_name` varchar(45)  ,
+  PRIMARY KEY (`main_categories_id`),
+  UNIQUE (`cat_name`)
+);
+CREATE TABLE sub_cat
+(
+  `sub_cat_id` int(11)   AUTO_INCREMENT,
+  `sub_cat_name` varchar(45)   ,
+  `description` varchar(445)   ,
+  `main_categories_id` int(11)  ,
+  PRIMARY KEY (`sub_cat_id`),
+  FOREIGN KEY (`main_categories_id`) REFERENCES main_categories(main_categories_id),
+  UNIQUE (`sub_cat_name`)
+);
+
+CREATE TABLE person
+(
+  `person_id` int(11)   AUTO_INCREMENT,  
+  `image` varchar(645)   ,
+  `first` varchar(45)   ,
+  `last` varchar(45)   ,
+  `password` varchar(45)   ,
+  `email` varchar(45)   ,
+  `type` varchar(45)   ,
+  `gender` varchar(45)   ,
+  `enabled` int(1)  ,
+  PRIMARY KEY (`person_id`)
+);
+
+CREATE TABLE Customer_service
+(
+  `service` varchar(45)  ,
+  `join_date` date  ,
+  `exp_date` date  ,
+  `person_id` int(11)  ,
+  PRIMARY KEY (`person_id`),
+  FOREIGN KEY (`person_id`) REFERENCES person(`person_id`)
+);
+
+CREATE TABLE admin
+(
+  `admin_id` int(11)   AUTO_INCREMENT,
+  `username` varchar(45)  ,
+  `password` varchar(45)  ,
+  PRIMARY KEY (`admin_id`)
+);
+
+CREATE TABLE taa_user
+(
+  `phone` varchar(45)  ,
+  `city` varchar(45)  ,
+  `district` varchar(45)  ,
+  `country` varchar(45)  ,
+  `rate` int(11)  ,
+  `birthofdate` date  ,
+  `person_id` int(11)  ,
+  PRIMARY KEY (`person_id`),
+  FOREIGN KEY (`person_id`) REFERENCES person(`person_id`)
+);
+
+CREATE TABLE report
+(
+  `report_id` int(11)   AUTO_INCREMENT,
+  `msg` varchar(2045)  ,
+  `type` varchar(45)  ,
+  `report_date` date  ,
+  `checked` int(1)  ,
+  `action` int(1)  ,
+  `person_id` int(11)  ,
+  PRIMARY KEY (`report_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`)
+);
+
+CREATE TABLE question
+(
+  `question_id` int(11)   AUTO_INCREMENT,
+  `title` varchar(145)  ,
+  `body` varchar(4045)  ,
+  `image` varchar(445)  ,
+  `audio` varchar(445)   ,
+  `video` varchar(445)   ,
+  `rate` int(11)  ,
+  `verified` int(1)  ,
+  `isdeleted` int(1)  ,
+  `notifi` int(1)  ,
+  `question_date` date  ,
+  `closed` int(1)  ,
+  `id_question` int(11)  ,
+  `person_id` int(11)  ,
+  PRIMARY KEY (`question_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`)
+);
+
+CREATE TABLE answers
+(
+  `answers_id` int(11)   AUTO_INCREMENT,
+  `answer` varchar(4045)  ,
+  `rate` int(11)  ,
+  `isdeleted` int(1)  ,
+   `image` varchar(445)  ,
+  `audio` varchar(445)   ,
+  `video` varchar(445)   ,
+  `notifi` int(1)   ,
+  `answers_date` date  ,
+  `question_id` int(11)   ,
+  `person_id` int(11)  ,
+  PRIMARY KEY (`answers_id`),
+  FOREIGN KEY (`question_id`) REFERENCES question(`question_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`),
+  FOREIGN KEY (`person_id`) REFERENCES Customer_service(`person_id`)
+);
+
+CREATE TABLE rate_question
+(
+  `person_id` int(11)  ,
+  `question_id` int(11)  ,
+  PRIMARY KEY (`person_id`, `question_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`),
+  FOREIGN KEY (`question_id`) REFERENCES question(`question_id`)
+);
+
+CREATE TABLE belongs_to
+(
+  `question_id` int(11)  ,
+  `sub_cat_id` int(11)  ,
+  PRIMARY KEY (`question_id`, `sub_cat_id`),
+  FOREIGN KEY (`question_id`) REFERENCES question(`question_id`),
+  FOREIGN KEY (`sub_cat_id`) REFERENCES sub_cat(`sub_cat_id`)
+);
+
+CREATE TABLE notifi_answers
+(
+  `notifi_id` int(11)   AUTO_INCREMENT,
+  `state` int(1)  ,
+  `person_id` int(11)  ,
+  `answers_id` int(11)  ,
+  PRIMARY KEY (`notifi_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`),
+  FOREIGN KEY (`answers_id`) REFERENCES answers(`answers_id`),
+  UNIQUE (`person_id`, `answers_id`)
+);
+
+CREATE TABLE notifi_Customer_service
+(
+  `id_notifi` int(11)   AUTO_INCREMENT,
+  `state` int(1)  ,
+  `service` varchar(45)  ,
+  `person_id` int(11)  ,
+  `answers_id` int(11)  ,
+  PRIMARY KEY (`id_notifi`),
+  FOREIGN KEY (`person_id`) REFERENCES Customer_service(`person_id`),
+  FOREIGN KEY (`answers_id`) REFERENCES answers(`answers_id`),
+  UNIQUE (`person_id`, `answers_id`)
+);
+
+CREATE TABLE rate_answers
+(
+  `person_id` int(11)  ,
+  `answers_id` int(11)  ,
+  PRIMARY KEY (`person_id`, `answers_id`),
+  FOREIGN KEY (`person_id`) REFERENCES taa_user(`person_id`),
+  FOREIGN KEY (`answers_id`) REFERENCES answers(`answers_id`)
+);
